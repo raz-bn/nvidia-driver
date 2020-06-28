@@ -3,7 +3,7 @@
 
 set -eu
 
-RUN_DIR=/run/nvidia
+RUN_DIR=/
 PID_FILE=${RUN_DIR}/${0##*/}.pid
 DRIVER_VERSION=${DRIVER_VERSION:?"Missing driver version"}
 KERNEL_UPDATE_HOOK=/run/kernel/postinst.d/update-nvidia-driver
@@ -250,18 +250,18 @@ _mount_rootfs() {
     echo "Mounting NVIDIA driver rootfs..."
     mount --make-runbindable /sys
     mount --make-private /sys
-    mkdir -p ${RUN_DIR}/driver
-    mount --rbind / ${RUN_DIR}/driver
+    mkdir -p ${RUN_DIR}
+    mount --rbind / ${RUN_DIR}
 
     echo "Change device files security context for selinux comptaibilty"
-    chcon -R -t container_file_t ${RUN_DIR}/driver/dev
+    chcon -R -t container_file_t ${RUN_DIR}/dev
 }
 
 # Unmount the driver rootfs from the run directory.
 _unmount_rootfs() {
     echo "Unmounting NVIDIA driver rootfs..."
-    if findmnt -r -o TARGET | grep "${RUN_DIR}/driver" > /dev/null; then
-        umount -l -R ${RUN_DIR}/driver
+    if findmnt -r -o TARGET | grep "${RUN_DIR}" > /dev/null; then
+        umount -l -R ${RUN_DIR}
     fi
 }
 
